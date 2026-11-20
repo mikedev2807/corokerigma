@@ -523,15 +523,13 @@
     const APPS_SCRIPT_API_URL = 'https://script.google.com/macros/s/AKfycbwzFssM_fgJ4VUYAtYUGxC6YVFR-sUEK2Z-IirYmO8qgHiSpYrH5mFj2-nbTnz88HPb/exec';
 
     function apiCall(action, payload) {
-      return fetch(APPS_SCRIPT_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8'
-        },
-        body: JSON.stringify({
-          action: action,
-          payload: payload || {}
-        })
+      var url = APPS_SCRIPT_API_URL +
+        '?action=' + encodeURIComponent(action) +
+        '&payload=' + encodeURIComponent(JSON.stringify(payload || {}));
+
+      return fetch(url, {
+        method: 'GET',
+        redirect: 'follow'
       }).then(function(response) {
         if (!response.ok) {
           throw new Error('Error HTTP ' + response.status);
