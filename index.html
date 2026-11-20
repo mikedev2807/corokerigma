@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kerigma</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Montserrat', sans-serif; background-color: #f8fafc; color: #333335; }
+    .brand-charcoal { color: #4b4b4d; }
+    .bg-brand-charcoal { background-color: #4b4b4d; }
+    .flatpickr-day.disabled, .flatpickr-day.disabled:hover {
+      background-color: #fee2e2 !important;
+      color: #ef4444 !important;
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
+    #mapa-traslado { height: 220px; width: 100%; border-radius: 12px; z-index: 10; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- NAVBAR -->
+  <nav class="bg-white/95 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-24">
+        <div class="flex items-center cursor-pointer py-1" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+          <svg class="h-14 sm:h-20 w-auto" viewBox="0 0 460 170" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(85, 5)">
+              <g transform="translate(10, 42) rotate(-32)">
+                <rect x="8" y="0" width="7" height="28" rx="1" fill="none" stroke="#4b4b4d" stroke-width="2.4"/>
+                <rect x="0" y="7" width="23" height="7" rx="1" fill="none" stroke="#4b4b4d" stroke-width="2.4"/>
+              </g>
+              <path d="M 32 45 Q 48 38, 60 52 T 95 45 Q 112 10, 145 22 T 195 48 Q 225 18, 255 35 T 230 62 Q 180 72, 145 55 T 105 28" fill="none" stroke="#4b4b4d" stroke-width="1.6"/>
+              <circle cx="46" cy="44" r="3.5" fill="#4b4b4d"/>
+              <circle cx="56" cy="50" r="3.5" fill="#4b4b4d"/>
+              <circle cx="66" cy="54" r="3.5" fill="#4b4b4d"/>
+              <circle cx="76" cy="55" r="3.5" fill="#4b4b4d"/>
+              <circle cx="92" cy="48" r="4.2" fill="#4b4b4d"/>
+              <circle cx="102" cy="36" r="3.5" fill="#4b4b4d"/>
+              <circle cx="110" cy="24" r="3.5" fill="#4b4b4d"/>
+              <circle cx="122" cy="18" r="3.5" fill="#4b4b4d"/>
+              <circle cx="135" cy="19" r="3.5" fill="#4b4b4d"/>
+              <circle cx="152" cy="24" r="4.2" fill="#4b4b4d"/>
+              <circle cx="166" cy="32" r="3.5" fill="#4b4b4d"/>
+              <circle cx="178" cy="39" r="3.5" fill="#4b4b4d"/>
+              <circle cx="190" cy="44" r="3.5" fill="#4b4b4d"/>
+              <circle cx="206" cy="35" r="4.2" fill="#4b4b4d"/>
+              <circle cx="220" cy="26" r="3.5" fill="#4b4b4d"/>
+              <circle cx="235" cy="26" r="3.5" fill="#4b4b4d"/>
+              <circle cx="248" cy="32" r="3.5" fill="#4b4b4d"/>
+              <circle cx="254" cy="44" r="3.5" fill="#4b4b4d"/>
+              <circle cx="246" cy="55" r="3.5" fill="#4b4b4d"/>
+              <circle cx="232" cy="60" r="3.5" fill="#4b4b4d"/>
+              <circle cx="215" cy="62" r="4.2" fill="#4b4b4d"/>
+              <circle cx="196" cy="64" r="3.5" fill="#4b4b4d"/>
+              <circle cx="180" cy="63" r="3.5" fill="#4b4b4d"/>
+              <circle cx="164" cy="60" r="3.5" fill="#4b4b4d"/>
+              <circle cx="148" cy="54" r="4.2" fill="#4b4b4d"/>
+              <circle cx="132" cy="42" r="3.5" fill="#4b4b4d"/>
+              <circle cx="118" cy="32" r="3.5" fill="#4b4b4d"/>
+            </g>
+            <text x="230" y="128" font-family="Montserrat, sans-serif" font-weight="900" font-size="62" letter-spacing="4" fill="#4b4b4d" text-anchor="middle">KERIGMA</text>
+            <text x="230" y="156" font-family="Montserrat, sans-serif" font-weight="500" font-size="15.5" letter-spacing="4.2" fill="#4b4b4d" text-anchor="middle">EL QUE CANTA ORA DOS VECES</text>
+          </svg>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-7 text-sm font-semibold text-slate-600">
+          <a href="#servicios" class="hover:text-slate-950 transition">Servicios</a>
+          <a href="#videos" class="hover:text-slate-950 transition">Multimedia</a>
+          <a href="#resenas" class="hover:text-slate-950 transition">Calificaciones</a>
+          <button type="button" onclick="abrirMisReservaciones()" class="hover:text-slate-950 transition flex items-center space-x-1.5">
+            <i class="far fa-calendar-check text-slate-500"></i>
+            <span>Mis Reservaciones</span>
+          </button>
+        </div>
+
+        <div class="flex items-center space-x-2.5 sm:space-x-3">
+          <button type="button" onclick="abrirMisReservaciones()" title="Mis Reservaciones" class="md:hidden bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 p-2.5 rounded-full text-xs font-semibold transition">
+            <i class="far fa-calendar-check text-slate-700"></i>
+          </button>
+
+          <div id="user-status-area">
+            <button type="button" onclick="abrirModalAuth()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 px-3 sm:px-4 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition flex items-center space-x-2">
+              <i class="fas fa-user-lock text-slate-600"></i>
+              <span class="hidden sm:inline">Iniciar Sesión</span>
+            </button>
+          </div>
+
+          <button type="button" onclick="toggleCarrito()" class="relative bg-brand-charcoal hover:bg-slate-800 text-white px-3.5 sm:px-4 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-md transition flex items-center space-x-2">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="hidden sm:inline">Carrito</span>
+            <span id="cart-badge" class="bg-amber-400 text-slate-950 text-xs rounded-full w-5 h-5 flex items-center justify-center font-extrabold">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- BANNER DE SESIÓN -->
+  <div id="session-banner" class="hidden bg-slate-800 text-slate-200 px-4 py-2 text-xs text-center">
+    <i class="fas fa-shield-alt text-amber-400 mr-1"></i>
+    Sesión activa como <strong id="banner-email" class="text-white"></strong>. Por seguridad, tu sesión se cerrará automáticamente tras 30 minutos de inactividad.
+  </div>
+
+  <!-- HERO SECTION -->
+  <header class="relative bg-[#3a3a3c] text-white overflow-hidden">
+    <div class="absolute inset-0 opacity-25 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1600&q=80');"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-[#2c2c2e] via-[#3a3a3c]/90 to-[#3a3a3c]/60"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <div class="max-w-2xl">
+        <span class="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/25 text-slate-200 text-xs font-semibold tracking-widest uppercase mb-4">
+          Reservaciones en Línea
+        </span>
+        <h1 class="text-3xl sm:text-5xl font-extrabold leading-tight mb-4 tracking-tight">
+          Rosarios, Misas, Alabanzas...
+        </h1>
+        <p class="text-slate-300 text-base sm:text-lg mb-8 leading-relaxed font-normal">
+          Consulta disponibilidad en tiempo real, marca la ubicación exacta en el mapa para calcular el traslado y da seguimiento a tus solicitudes.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#servicios" class="bg-white text-slate-900 hover:bg-slate-100 font-bold px-6 py-3.5 rounded-xl shadow-lg hover:scale-[1.02] transition">
+            <i class="fas fa-calendar-check mr-2"></i>Reservar Servicio
+          </a>
+          <button type="button" onclick="abrirMisReservaciones()" class="bg-white/10 hover:bg-white/20 backdrop-blur text-white font-semibold px-6 py-3.5 rounded-xl border border-white/25 transition">
+            <i class="fas fa-clipboard-check mr-2"></i>Mis Reservaciones
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SECCIÓN DE SERVICIOS -->
+  <main id="servicios" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex-grow">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">Nuestros Servicios</h2>
+      <div class="w-16 h-1 bg-brand-charcoal mx-auto my-3 rounded-full"></div>
+      <p class="text-slate-600 text-sm sm:text-base">Selecciona un servicio para elegir fecha, horario y ubicar el evento en el mapa.</p>
+    </div>
+
+    <div id="loader-servicios" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 animate-pulse h-80"></div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 animate-pulse h-80"></div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 animate-pulse h-80"></div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 animate-pulse h-80"></div>
+    </div>
+
+    <div id="grid-servicios" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 hidden"></div>
+  </main>
+
+  <!-- SECCIÓN MULTIMEDIA CON 3 APARTADOS: CANTOS, ALABANZAS Y ROSARIOS -->
+  <section id="videos" class="bg-[#2c2c2e] text-white py-16 border-t border-slate-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-8">
+        <span class="text-slate-400 text-xs font-bold uppercase tracking-widest">Galería Multimedia</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold mt-1">Conoce Nuestro Ministerio</h2>
+        <div class="w-16 h-1 bg-white/40 mx-auto my-3 rounded-full"></div>
+        <p class="text-slate-300 text-sm sm:text-base">Explora nuestro repertorio</p>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-3 mb-10">
+        <button type="button" onclick="filtrarVideos('Cantos')" id="tab-vid-Cantos" class="tab-video-btn px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold bg-white text-slate-900 shadow-md transition flex items-center space-x-2">
+          <i class="fas fa-music"></i>
+          <span>Cantos</span>
+        </button>
+        <button type="button" onclick="filtrarVideos('Alabanzas')" id="tab-vid-Alabanzas" class="tab-video-btn px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold bg-white/10 text-slate-200 hover:bg-white/20 border border-white/15 transition flex items-center space-x-2">
+          <i class="fas fa-hands-praying"></i>
+          <span>Alabanzas</span>
+        </button>
+        <button type="button" onclick="filtrarVideos('Rosarios')" id="tab-vid-Rosarios" class="tab-video-btn px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold bg-white/10 text-slate-200 hover:bg-white/20 border border-white/15 transition flex items-center space-x-2">
+          <i class="fas fa-cross"></i>
+          <span>Rosarios</span>
+        </button>
+      </div>
+
+      <div id="grid-videos" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN DE CALIFICACIONES -->
+  <section id="resenas" class="bg-slate-50 py-16 border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-amber-600 text-xs font-bold uppercase tracking-widest">Testimonios</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 mt-1">Califica Nuestra Participación</h2>
+        <div class="w-16 h-1 bg-brand-charcoal mx-auto my-3 rounded-full"></div>
+        <p class="text-slate-600 text-sm sm:text-base">Tu opinión nos ayuda a mejorar.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <h3 class="font-bold text-lg text-slate-900 mb-1">Deja tu calificación</h3>
+          <p class="text-xs text-slate-500 mb-5">Selecciona de 1 a 5 estrellas y escribe un comentario opcional.</p>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Tu Puntuación *</label>
+              <div id="star-selector" class="flex items-center space-x-2 text-3xl text-slate-300">
+                <button type="button" onclick="seleccionarEstrellas(1)" class="star-btn hover:scale-110 transition focus:outline-none" data-val="1"><i class="fas fa-star"></i></button>
+                <button type="button" onclick="seleccionarEstrellas(2)" class="star-btn hover:scale-110 transition focus:outline-none" data-val="2"><i class="fas fa-star"></i></button>
+                <button type="button" onclick="seleccionarEstrellas(3)" class="star-btn hover:scale-110 transition focus:outline-none" data-val="3"><i class="fas fa-star"></i></button>
+                <button type="button" onclick="seleccionarEstrellas(4)" class="star-btn hover:scale-110 transition focus:outline-none" data-val="4"><i class="fas fa-star"></i></button>
+                <button type="button" onclick="seleccionarEstrellas(5)" class="star-btn hover:scale-110 transition focus:outline-none" data-val="5"><i class="fas fa-star"></i></button>
+              </div>
+              <span id="star-label" class="text-xs font-semibold text-amber-600 mt-1 block">5 de 5 estrellas (Excelente)</span>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Tu Nombre (Opcional)</label>
+              <input type="text" id="resena-nombre" maxlength="80" placeholder="Ej. Familia Hernández"
+                     class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-slate-500">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Comentario (Opcional)</label>
+              <textarea id="resena-comentario" rows="3" maxlength="350" placeholder="Cuéntanos qué te pareció nuestro servicio musical..."
+                        class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-slate-500"></textarea>
+            </div>
+
+            <button type="button" id="btn-enviar-resena" onclick="enviarCalificacion()" class="w-full bg-brand-charcoal hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-sm shadow transition">
+              Publicar Calificación
+            </button>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-6">
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-4">
+              <div class="text-4xl font-black text-slate-900" id="promedio-estrellas">5.0</div>
+              <div>
+                <div class="text-amber-400 text-lg">
+                  <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5" id="total-resenas-texto">Basado en opiniones de clientes</p>
+              </div>
+            </div>
+            <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-full font-semibold">
+              <i class="fas fa-check-circle mr-1"></i>Opiniones Verificadas
+            </span>
+          </div>
+
+          <div id="grid-resenas" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-white text-slate-600 py-10 border-t border-slate-200 text-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="text-center sm:text-left">
+        <p class="font-black text-slate-800 text-lg tracking-widest">KERIGMA</p>
+        <p class="tracking-widest text-slate-500 text-[11px] uppercase">El que canta ora dos veces</p>
+      </div>
+      <p class="text-xs text-slate-400">© 2026 Kerigma. Todos los derechos reservados. Sistema protegido con cierre de sesión automático.</p>
+    </div>
+  </footer>
+
+  <!-- MODAL 1: AGENDAR FECHA, HORA Y MAPA DE TRASLADO -->
+  <div id="modal-agendar" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl my-auto max-h-[94vh] flex flex-col">
+      <div class="bg-brand-charcoal text-white px-6 py-4 flex justify-between items-center shrink-0">
+        <div>
+          <span class="text-[11px] text-slate-300 font-semibold uppercase tracking-wider">Configurar Reservación y Traslado</span>
+          <h3 id="modal-srv-titulo" class="font-bold text-lg">Nombre del Servicio</h3>
+        </div>
+        <button type="button" onclick="cerrarModalAgendar()" class="text-slate-300 hover:text-white text-xl"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="p-5 sm:p-6 space-y-5 overflow-y-auto flex-grow">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
+              <i class="far fa-calendar-alt text-slate-600 mr-1"></i> 1. Fecha Disponible
+            </label>
+            <input type="text" id="input-fecha" placeholder="Cargando disponibilidad..." readonly
+                   class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 bg-white cursor-pointer text-sm font-medium">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
+              <i class="far fa-clock text-slate-600 mr-1"></i> 2. Horario Disponible (<span id="modal-srv-duracion">1h</span>)
+            </label>
+            <div id="contenedor-horas" class="grid grid-cols-3 gap-1.5 max-h-28 overflow-y-auto pr-1">
+              <p class="col-span-full text-xs text-slate-400 italic py-2">Elige primero una fecha.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-200 pt-4">
+          <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-700">
+              <i class="fas fa-map-marked-alt text-red-600 mr-1"></i> 3. Marca la ubicación exacta del evento en el mapa
+            </label>
+            <button type="button" onclick="usarMiUbicacionGPS()" class="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1 rounded-full font-semibold transition">
+              <i class="fas fa-crosshairs mr-1"></i> Usar mi GPS actual
+            </button>
+          </div>
+
+          <div class="flex gap-2 mb-2.5">
+            <input type="text" id="buscador-mapa" placeholder="Buscar iglesia, colonia o dirección en el mapa..."
+                   class="flex-grow px-3.5 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-slate-500">
+            <button type="button" onclick="buscarDireccionEnMapa()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition">
+              <i class="fas fa-search"></i> Buscar
+            </button>
+          </div>
+
+          <div class="relative border border-slate-300 rounded-xl overflow-hidden shadow-inner">
+            <div id="mapa-traslado"></div>
+            <div class="bg-slate-900/85 text-white text-[11px] px-3 py-1.5 flex justify-between items-center">
+              <span><i class="fas fa-circle text-blue-400 mr-1"></i>Salida Kerigma &nbsp;|&nbsp; <i class="fas fa-map-pin text-red-400 mr-1"></i>Haz clic o arrastra el pin rojo al lugar del evento</span>
+            </div>
+          </div>
+
+          <div class="mt-2.5">
+            <input type="text" id="input-ubicacion" maxlength="200" placeholder="Nombre de la Parroquia, Salón o Referencia exacta *"
+                   class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-slate-500">
+          </div>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+          <div class="flex justify-between text-xs text-slate-600">
+            <span>Tarifa base del servicio:</span>
+            <strong id="desglose-base" class="text-slate-900">$0.00</strong>
+          </div>
+          <div class="flex justify-between text-xs text-slate-600">
+            <span id="desglose-traslado-label">Traslado:</span>
+            <strong id="desglose-traslado" class="text-blue-700">$0.00</strong>
+          </div>
+          <div class="pt-2 border-t border-slate-200 flex justify-between items-center">
+            <span class="text-sm font-bold text-slate-800">Total con Traslado:</span>
+            <span id="modal-srv-precio" class="text-xl font-black text-slate-900">$0.00</span>
+          </div>
+        </div>
+
+        <div id="error-agendar" class="hidden text-xs text-red-600 bg-red-50 p-3 rounded-lg border border-red-200"></div>
+      </div>
+
+      <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-200 flex justify-end space-x-3 shrink-0">
+        <button type="button" onclick="cerrarModalAgendar()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-200 transition">Cancelar</button>
+        <button type="button" id="btn-agregar-carrito" onclick="agregarAlCarrito()" class="bg-brand-charcoal hover:bg-slate-800 text-white px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-md transition">
+          <i class="fas fa-cart-plus mr-1"></i> Agregar al Carrito
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: AUTENTICACIÓN EXCLUSIVA POR CORREO ELECTRÓNICO (OTP) -->
+  <div id="modal-auth" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl">
+      <div class="bg-brand-charcoal text-white p-6 text-center relative">
+        <button type="button" onclick="cerrarModalAuth()" class="absolute top-4 right-4 text-slate-300 hover:text-white"><i class="fas fa-times"></i></button>
+        <div class="w-14 h-14 bg-white/10 border border-white/30 rounded-full flex items-center justify-center mx-auto mb-3 text-white text-2xl">
+          <i class="fas fa-envelope-open-text"></i>
+        </div>
+        <h3 class="text-xl font-extrabold tracking-wide">Acceso Seguro Kerigma</h3>
+        <p class="text-xs text-slate-300 mt-1">Verifica tu correo electrónico con un código de acceso</p>
+      </div>
+
+      <div class="p-6">
+        <div id="auth-step-1" class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Correo Electrónico</label>
+            <input type="email" id="auth-email" placeholder="tucorreo@ejemplo.com"
+                   class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 text-sm">
+          </div>
+
+          <button type="button" id="btn-enviar-otp" onclick="solicitarCodigoOTP()" class="w-full bg-brand-charcoal hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow-md transition">
+            Enviar Código al Correo
+          </button>
+        </div>
+
+        <div id="auth-step-2" class="space-y-4 hidden">
+          <div class="bg-slate-100 text-slate-800 p-3 rounded-xl text-xs border border-slate-200">
+            Hemos enviado un código de 6 dígitos a <strong id="auth-destino-display"></strong>. Revisa tu bandeja de entrada o spam.
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Código de 6 dígitos</label>
+            <input type="text" id="auth-otp" maxlength="6" placeholder="000000"
+                   class="w-full px-4 py-3 border border-slate-300 rounded-xl text-center text-2xl font-bold tracking-[0.5em] focus:ring-2 focus:ring-slate-500">
+          </div>
+          <button type="button" id="btn-verificar-otp" onclick="validarCodigoOTP()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl shadow-md hover:bg-slate-800 transition">
+            Verificar y Entrar
+          </button>
+          <button type="button" onclick="volverPaso1Auth()" class="w-full text-xs text-slate-500 hover:text-slate-800 underline">Cambiar correo electrónico</button>
+        </div>
+
+        <div id="auth-mensaje" class="mt-4 hidden text-xs p-3 rounded-lg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: MIS RESERVACIONES DEL CLIENTE -->
+  <div id="modal-mis-reservas" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[88vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="bg-brand-charcoal text-white px-6 py-4 flex justify-between items-center">
+        <div>
+          <span class="text-[11px] text-amber-300 font-semibold uppercase tracking-wider">Historial y Seguimiento</span>
+          <h3 class="font-bold text-lg">Mis Reservaciones</h3>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button type="button" onclick="cargarMisReservaciones()" title="Actualizar estatus" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+            <i class="fas fa-sync-alt mr-1"></i> Actualizar
+          </button>
+          <button type="button" onclick="cerrarMisReservaciones()" class="text-slate-300 hover:text-white text-xl"><i class="fas fa-times"></i></button>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 px-6 py-2.5 border-b border-slate-200 flex justify-between items-center text-xs text-slate-600">
+        <span>Mostrando reservaciones de: <strong id="mis-reservas-email" class="text-slate-900"></strong></span>
+        <span id="mis-reservas-count" class="font-bold text-slate-800">0 registros</span>
+      </div>
+
+      <div id="lista-mis-reservas" class="p-6 overflow-y-auto space-y-4 flex-grow"></div>
+
+      <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 text-right">
+        <button type="button" onclick="cerrarMisReservaciones()" class="bg-brand-charcoal text-white px-5 py-2 rounded-xl text-xs font-bold hover:bg-slate-800 transition">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER LATERAL: CARRITO DE COMPRAS CON CUPONES DE DESCUENTO -->
+  <div id="drawer-carrito" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden justify-end">
+    <div class="bg-white w-full max-w-md h-full flex flex-col shadow-2xl">
+      <div class="bg-brand-charcoal text-white px-6 py-5 flex justify-between items-center shrink-0">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-shopping-bag text-white text-lg"></i>
+          <h3 class="font-bold text-lg">Tu Carrito de Reservas</h3>
+        </div>
+        <button type="button" onclick="toggleCarrito()" class="text-slate-300 hover:text-white text-xl"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div id="carrito-items" class="flex-grow overflow-y-auto p-6 space-y-4"></div>
+
+      <div id="carrito-footer" class="border-t border-slate-200 p-5 bg-slate-50 space-y-3.5 hidden shrink-0">
+        <div class="bg-white p-3 rounded-xl border border-slate-200">
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+            <i class="fas fa-tag text-amber-600 mr-1"></i> ¿Tienes un cupón de descuento?
+          </label>
+          <div class="flex gap-2">
+            <input type="text" id="input-cupon" placeholder="Ej. KERIGMA10" maxlength="30"
+                   class="flex-grow px-3 py-2 border border-slate-300 rounded-lg text-xs uppercase font-bold tracking-wider focus:ring-2 focus:ring-slate-500">
+            <button type="button" id="btn-aplicar-cupon" onclick="aplicarCupon()" class="bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-2 rounded-lg text-xs font-bold transition">
+              Aplicar
+            </button>
+          </div>
+          <div id="cupon-feedback" class="hidden mt-1.5 text-[11px] font-semibold flex justify-between items-center">
+            <span id="cupon-feedback-text"></span>
+            <button type="button" id="btn-quitar-cupon" onclick="quitarCupon()" class="hidden text-red-500 hover:underline ml-2">Quitar</button>
+          </div>
+        </div>
+
+        <div class="space-y-2.5">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Datos del Solicitante</p>
+          <input type="text" id="checkout-nombre" placeholder="Tu Nombre Completo *" maxlength="100"
+                 class="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-slate-500">
+          <input type="tel" id="checkout-telefono" placeholder="Teléfono / WhatsApp de contacto *" maxlength="20"
+                 class="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-slate-500">
+        </div>
+
+        <div class="pt-2 border-t border-slate-200 space-y-1">
+          <div id="fila-subtotal" class="hidden flex justify-between text-xs text-slate-500">
+            <span>Subtotal:</span>
+            <span id="carrito-subtotal">$0.00</span>
+          </div>
+          <div id="fila-descuento" class="hidden flex justify-between text-xs text-emerald-600 font-bold">
+            <span id="carrito-descuento-label">Descuento:</span>
+            <span id="carrito-descuento">-$0.00</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-700 font-semibold text-sm">Total Estimado:</span>
+            <span id="carrito-total" class="text-2xl font-black text-slate-900">$0.00</span>
+          </div>
+        </div>
+
+        <button type="button" id="btn-confirmar-compra" onclick="finalizarCompra()" class="w-full bg-brand-charcoal hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
+          <i class="fas fa-paper-plane"></i>
+          <span>Enviar Solicitud de Reserva</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMACIÓN EXITOSA -->
+  <div id="modal-exito" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-8 text-center shadow-2xl">
+      <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+        <i class="fas fa-hourglass-half"></i>
+      </div>
+      <h3 class="text-2xl font-extrabold text-slate-900 mb-2">¡Solicitud Enviada!</h3>
+      <p class="text-sm text-slate-600 mb-4">Tu solicitud quedó registrada con estado <strong>PENDIENTE</strong>. En cuanto nuestro equipo la confirme o actualice su estado, recibirás un correo electrónico con tu comprobante oficial en PDF.</p>
+      <div class="bg-slate-100 py-2.5 px-4 rounded-xl mb-6">
+        <span class="text-xs text-slate-500 block">Folio de Solicitud</span>
+        <strong id="exito-folio" class="text-lg text-slate-900 tracking-wider">KRG-0000</strong>
+      </div>
+      <div class="flex gap-3">
+        <button type="button" onclick="document.getElementById('modal-exito').classList.add('hidden')" class="w-1/2 bg-slate-200 text-slate-800 font-bold py-3 rounded-xl hover:bg-slate-300 transition">
+          Cerrar
+        </button>
+        <button type="button" onclick="document.getElementById('modal-exito').classList.add('hidden'); abrirMisReservaciones();" class="w-1/2 bg-brand-charcoal text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition">
+          Mis Reservaciones
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // CONFIGURACIÓN DE CONEXIÓN CON GOOGLE APPS SCRIPT (BACKEND API REST)
+    // =========================================================================
+    const APPS_SCRIPT_API_URL = 'https://script.google.com/macros/s/AKfycbwzFssM_fgJ4VUYAtYUGxC6YVFR-sUEK2Z-IirYmO8qgHiSpYrH5mFj2-nbTnz88HPb/exec';
+
+    function apiCall(action, payload) {
+      return fetch(APPS_SCRIPT_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          action: action,
+          payload: payload || {}
+        })
+      }).then(function(response) {
+        if (!response.ok) {
+          throw new Error('Error HTTP ' + response.status);
+        }
+        return response.json();
+      });
+    }
+
+    var appData = {
+      servicios: [],
+      videos: [],
+      resenas: [],
+      horariosBase: [],
+      bloquesOcupados: {},
+      trasladoConfig: { origenLat: 19.8454, origenLng: -90.5237 }
+    };
+    var carrito = [];
+    var cuponAplicado = null;
+    var categoriaVideoActual = 'Cantos';
+
+    var servicioSeleccionado = null;
+    var horaSeleccionada = null;
+    var flatpickrInstance = null;
+    var estrellasSeleccionadas = 5;
+
+    var leafletMap = null;
+    var markerOrigen = null;
+    var markerDestino = null;
+    var polylineRuta = null;
+    var trasladoActual = {
+      calculado: false,
+      calculando: false,
+      lat: null,
+      lng: null,
+      distanciaKm: 0,
+      costoTraslado: 0
+    };
+
+    var INACTIVITY_LIMIT_MS = 30 * 60 * 1000;
+    var inactivityTimer = null;
+    var sessionToken = sessionStorage.getItem('kerigma_token') || null;
+    var userEmail = sessionStorage.getItem('kerigma_email') || null;
+    var pendingActionAfterAuth = null;
+
+    function escapeHTML(str) {
+      if (!str) return '';
+      var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      };
+      return String(str).replace(/[&<>'"]/g, function(tag) {
+        return map[tag] || tag;
+      });
+    }
+
+    function horaAMinutosJS(horaStr) {
+      var partes = String(horaStr).split(':');
+      return (parseInt(partes[0], 10) || 0) * 60 + (parseInt(partes[1], 10) || 0);
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      actualizarUIUsuario();
+      actualizarCarritoUI();
+      seleccionarEstrellas(5);
+      iniciarMonitorInactividad();
+      cargarDatosServidor();
+    });
+
+    function cargarDatosServidor() {
+      apiCall('obtenerDatosIniciales', {})
+        .then(function(res) {
+          appData = res || appData;
+          renderizarServicios();
+          filtrarVideos('Cantos');
+          renderizarResenas();
+        })
+        .catch(function(err) {
+          alert('Error al conectar con la base de datos: ' + err.message);
+        });
+    }
+
+    function iniciarMonitorInactividad() {
+      var eventos = ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart'];
+      for (var i = 0; i < eventos.length; i++) {
+        document.addEventListener(eventos[i], reiniciarTemporizadorInactividad, { passive: true });
+      }
+      reiniciarTemporizadorInactividad();
+    }
+
+    function reiniciarTemporizadorInactividad() {
+      clearTimeout(inactivityTimer);
+      if (sessionToken) {
+        inactivityTimer = setTimeout(function() {
+          cerrarSesion(true);
+        }, INACTIVITY_LIMIT_MS);
+      }
+    }
+
+    function cerrarSesion(porInactividad) {
+      var tokenAnterior = sessionToken;
+      sessionToken = null;
+      userEmail = null;
+      sessionStorage.removeItem('kerigma_token');
+      sessionStorage.removeItem('kerigma_email');
+      sessionStorage.removeItem('kerigma_nombre');
+      sessionStorage.removeItem('kerigma_telefono');
+      clearTimeout(inactivityTimer);
+      actualizarUIUsuario();
+
+      if (tokenAnterior) {
+        apiCall('cerrarSesionServidor', { token: tokenAnterior }).catch(function() {});
+      }
+      if (porInactividad) {
+        alert('Tu sesión se ha cerrado automáticamente por seguridad tras 30 minutos de inactividad.');
+      }
+    }
+
+    function actualizarUIUsuario() {
+      var area = document.getElementById('user-status-area');
+      var banner = document.getElementById('session-banner');
+      var bannerEmail = document.getElementById('banner-email');
+
+      if (sessionToken && userEmail) {
+        area.innerHTML =
+          '<div class="flex items-center space-x-2">' +
+            '<span class="hidden xl:inline text-xs text-slate-700 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-300 font-medium">' +
+              '<i class="fas fa-check-circle text-emerald-600 mr-1"></i>' + escapeHTML(userEmail) +
+            '</span>' +
+            '<button type="button" onclick="cerrarSesion(false)" title="Cerrar Sesión" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-2 rounded-full text-xs font-semibold transition">' +
+              '<i class="fas fa-sign-out-alt"></i> <span class="hidden sm:inline">Salir</span>' +
+            '</button>' +
+          '</div>';
+        banner.classList.remove('hidden');
+        bannerEmail.textContent = userEmail;
+
+        var savedName = sessionStorage.getItem('kerigma_nombre');
+        var savedPhone = sessionStorage.getItem('kerigma_telefono');
+        if (savedName) {
+          document.getElementById('checkout-nombre').value = savedName;
+          document.getElementById('resena-nombre').value = savedName;
+        }
+        if (savedPhone) document.getElementById('checkout-telefono').value = savedPhone;
+
+        reiniciarTemporizadorInactividad();
+      } else {
+        area.innerHTML =
+          '<button type="button" onclick="abrirModalAuth()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 px-3 sm:px-4 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition flex items-center space-x-2">' +
+            '<i class="fas fa-user-lock text-slate-600"></i>' +
+            '<span class="hidden sm:inline">Iniciar Sesión</span>' +
+          '</button>';
+        banner.classList.add('hidden');
+      }
+    }
+
+    // =========================================================================
+    // SECCIÓN MULTIMEDIA: 3 APARTADOS (CANTOS, ALABANZAS Y ROSARIOS)
+    // =========================================================================
+    function filtrarVideos(categoria) {
+      categoriaVideoActual = categoria;
+      var categorias = ['Cantos', 'Alabanzas', 'Rosarios'];
+      for (var i = 0; i < categorias.length; i++) {
+        var cat = categorias[i];
+        var btn = document.getElementById('tab-vid-' + cat);
+        if (btn) {
+          if (cat === categoria) {
+            btn.className = 'tab-video-btn px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold bg-white text-slate-900 shadow-md transition flex items-center space-x-2';
+          } else {
+            btn.className = 'tab-video-btn px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold bg-white/10 text-slate-200 hover:bg-white/20 border border-white/15 transition flex items-center space-x-2';
+          }
+        }
+      }
+      renderizarVideos();
+    }
+
+    function convertirUrlEmbed(url) {
+      if (!url) return '';
+      var ytReg = new RegExp('(?:youtu\\.be\\/|youtube\\.com\\/(?:watch\\?v=|embed\\/|shorts\\/))([a-zA-Z0-9_-]{11})');
+      var ytMatch = url.match(ytReg);
+      if (ytMatch && ytMatch[1]) {
+        return 'https:' + '//www.youtube.com/embed/' + ytMatch[1];
+      }
+      var driveReg = new RegExp('drive\\.google\\.com\\/file\\/d\\/([a-zA-Z0-9_-]+)');
+      var driveMatch = url.match(driveReg);
+      if (driveMatch && driveMatch[1]) {
+        return 'https:' + '//drive.google.com/file/d/' + driveMatch[1] + '/preview';
+      }
+      return url;
+    }
+
+    function renderizarVideos() {
+      var grid = document.getElementById('grid-videos');
+      var filtrados = [];
+      for (var i = 0; i < (appData.videos || []).length; i++) {
+        var v = appData.videos[i];
+        var catVideo = (v.categoria || 'Cantos').toLowerCase().trim();
+        if (catVideo === categoriaVideoActual.toLowerCase()) {
+          filtrados.push(v);
+        }
+      }
+
+      if (filtrados.length === 0) {
+        grid.innerHTML =
+          '<div class="col-span-full text-center py-12 bg-white/5 border border-white/10 rounded-2xl">' +
+            '<i class="fas fa-film text-3xl text-slate-500 mb-2"></i>' +
+            '<p class="text-slate-300 text-sm">Aún no hay videos publicados en el apartado de <strong>' + escapeHTML(categoriaVideoActual) + '</strong>.</p>' +
+          '</div>';
+        return;
+      }
+
+      var html = '';
+      for (var j = 0; j < filtrados.length; j++) {
+        var vid = filtrados[j];
+        var embedUrl = convertirUrlEmbed(vid.url);
+        html +=
+          '<div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden shadow-lg">' +
+            '<div class="aspect-video w-full bg-black">' +
+              '<iframe src="' + escapeHTML(embedUrl) + '" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' +
+            '</div>' +
+            '<div class="p-5">' +
+              '<span class="inline-block text-[10px] uppercase tracking-wider font-bold px-2.5 py-0.5 rounded-full bg-white/10 text-amber-300 mb-2">' + escapeHTML(vid.categoria) + '</span>' +
+              '<h3 class="font-bold text-lg text-white">' + escapeHTML(vid.titulo) + '</h3>' +
+              '<p class="text-slate-300 text-sm mt-1">' + escapeHTML(vid.descripcion) + '</p>' +
+            '</div>' +
+          '</div>';
+      }
+      grid.innerHTML = html;
+    }
+
+    // =========================================================================
+    // CUPONES DE DESCUENTO EN EL CARRITO
+    // =========================================================================
+    function obtenerSubtotalCarrito() {
+      var sub = 0;
+      for (var i = 0; i < carrito.length; i++) {
+        sub += Number(carrito[i].precio) || 0;
+      }
+      return sub;
+    }
+
+    function aplicarCupon() {
+      var input = document.getElementById('input-cupon');
+      var codigo = input.value.trim().toUpperCase();
+      var subtotal = obtenerSubtotalCarrito();
+
+      if (!codigo) {
+        mostrarFeedbackCupon('Escribe un código de cupón.', true);
+        return;
+      }
+      if (subtotal <= 0) return;
+
+      var btn = document.getElementById('btn-aplicar-cupon');
+      btn.disabled = true;
+      btn.textContent = '...';
+
+      apiCall('validarCuponDescuento', { codigo: codigo, subtotal: subtotal })
+        .then(function(res) {
+          btn.disabled = false;
+          btn.textContent = 'Aplicar';
+
+          if (res && res.success) {
+            cuponAplicado = {
+              codigo: res.codigo,
+              tipo: res.tipo,
+              valor: res.valor,
+              descuento: res.descuento,
+              etiqueta: res.etiqueta
+            };
+            mostrarFeedbackCupon('✓ Cupón ' + res.codigo + ' aplicado (' + res.etiqueta + ')', false);
+            document.getElementById('btn-quitar-cupon').classList.remove('hidden');
+            actualizarCarritoUI();
+          } else {
+            cuponAplicado = null;
+            document.getElementById('btn-quitar-cupon').classList.add('hidden');
+            mostrarFeedbackCupon(res.message || 'Cupón no válido.', true);
+            actualizarCarritoUI();
+          }
+        })
+        .catch(function(err) {
+          btn.disabled = false;
+          btn.textContent = 'Aplicar';
+          mostrarFeedbackCupon('Error al validar cupón: ' + err.message, true);
+        });
+    }
+
+    function quitarCupon() {
+      cuponAplicado = null;
+      document.getElementById('input-cupon').value = '';
+      document.getElementById('cupon-feedback').classList.add('hidden');
+      document.getElementById('btn-quitar-cupon').classList.add('hidden');
+      actualizarCarritoUI();
+    }
+
+    function mostrarFeedbackCupon(texto, esError) {
+      var box = document.getElementById('cupon-feedback');
+      var span = document.getElementById('cupon-feedback-text');
+      span.textContent = texto;
+      box.className = 'mt-1.5 text-[11px] font-semibold flex justify-between items-center ' + (esError ? 'text-red-600' : 'text-emerald-600');
+      box.classList.remove('hidden');
+    }
+
+    // =========================================================================
+    // MAPA INTERACTIVO Y CÁLCULO DE TRASLADO (LOCALIZACIÓN GPS DIRECTA SIN IP)
+    // =========================================================================
+    function inicializarMapaTraslado() {
+      var origenLat = (appData.trasladoConfig && appData.trasladoConfig.origenLat) ? appData.trasladoConfig.origenLat : 19.8454;
+      var origenLng = (appData.trasladoConfig && appData.trasladoConfig.origenLng) ? appData.trasladoConfig.origenLng : -90.5237;
+
+      if (!leafletMap) {
+        leafletMap = L.map('mapa-traslado').setView([origenLat, origenLng], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap'
+        }).addTo(leafletMap);
+
+        var iconoOrigen = L.divIcon({
+          html: '<div style="background:#1e3a8a;color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.4);"><i class="fas fa-music" style="font-size:11px;"></i></div>',
+          className: '',
+          iconSize: [28, 28],
+          iconAnchor: [14, 14]
+        });
+
+        markerOrigen = L.marker([origenLat, origenLng], { icon: iconoOrigen })
+          .addTo(leafletMap)
+          .bindPopup('<strong>Salida Kerigma</strong>');
+
+        leafletMap.on('click', function(e) {
+          fijarDestinoEnMapa(e.latlng.lat, e.latlng.lng, true);
+        });
+      } else {
+        leafletMap.setView([origenLat, origenLng], 13);
+        if (markerOrigen) markerOrigen.setLatLng([origenLat, origenLng]);
+        if (markerDestino) {
+          leafletMap.removeLayer(markerDestino);
+          markerDestino = null;
+        }
+        if (polylineRuta) {
+          leafletMap.removeLayer(polylineRuta);
+          polylineRuta = null;
+        }
+      }
+
+      setTimeout(function() {
+        leafletMap.invalidateSize();
+      }, 250);
+    }
+
+    function fijarDestinoEnMapa(lat, lng, autocompletarTexto) {
+      var iconoDestino = L.divIcon({
+        html: '<div style="background:#dc2626;color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid white;box-shadow:0 3px 8px rgba(0,0,0,0.5);"><i class="fas fa-map-marker-alt" style="font-size:14px;"></i></div>',
+        className: '',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32]
+      });
+
+      if (!markerDestino) {
+        markerDestino = L.marker([lat, lng], { draggable: true, icon: iconoDestino }).addTo(leafletMap);
+        markerDestino.on('dragend', function(ev) {
+          var pos = ev.target.getLatLng();
+          fijarDestinoEnMapa(pos.lat, pos.lng, true);
+        });
+      } else {
+        markerDestino.setLatLng([lat, lng]);
+      }
+
+      trasladoActual.lat = lat;
+      trasladoActual.lng = lng;
+      trasladoActual.calculado = false;
+      trasladoActual.calculando = true;
+
+      document.getElementById('desglose-traslado-label').innerHTML = 'Traslado <span class="text-slate-400">(calculando...)</span>:';
+      document.getElementById('desglose-traslado').textContent = '...';
+
+      apiCall('calcularDistanciaYTraslado', { lat: lat, lng: lng })
+        .then(function(res) {
+          trasladoActual.calculando = false;
+          if (res && res.success) {
+            trasladoActual.calculado = true;
+            trasladoActual.distanciaKm = res.distanciaKm;
+            trasladoActual.costoTraslado = res.costoTraslado;
+
+            var precioBase = Number(servicioSeleccionado.precio) || 0;
+            var totalConTraslado = precioBase + res.costoTraslado;
+
+            document.getElementById('desglose-traslado-label').textContent = 'Traslado:';
+            document.getElementById('desglose-traslado').textContent = '+ $' + Number(res.costoTraslado).toLocaleString('es-MX', { minimumFractionDigits: 2 });
+            document.getElementById('modal-srv-precio').textContent = '$' + totalConTraslado.toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
+
+            var inputUbic = document.getElementById('input-ubicacion');
+            if (autocompletarTexto && res.direccionDetectada && !inputUbic.value.trim()) {
+              inputUbic.value = res.direccionDetectada;
+            }
+
+            if (polylineRuta) {
+              leafletMap.removeLayer(polylineRuta);
+            }
+            if (res.rutaPuntos && res.rutaPuntos.length > 1) {
+              polylineRuta = L.polyline(res.rutaPuntos, { color: '#2563eb', weight: 4, opacity: 0.8 }).addTo(leafletMap);
+              leafletMap.fitBounds(polylineRuta.getBounds(), { padding: [30, 30] });
+            }
+          } else {
+            document.getElementById('desglose-traslado-label').textContent = 'Traslado (error al calcular):';
+          }
+        })
+        .catch(function() {
+          trasladoActual.calculando = false;
+          document.getElementById('desglose-traslado-label').textContent = 'Traslado (error de red):';
+        });
+    }
+
+    function usarMiUbicacionGPS() {
+      if (!navigator.geolocation) {
+        alert('Tu navegador no soporta geolocalización GPS.');
+        return;
+      }
+      document.getElementById('desglose-traslado-label').innerHTML = 'Traslado <span class="text-slate-400">(obteniendo GPS...)</span>:';
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          leafletMap.setView([pos.coords.latitude, pos.coords.longitude], 15);
+          fijarDestinoEnMapa(pos.coords.latitude, pos.coords.longitude, true);
+        },
+        function() {
+          alert('No se pudo obtener tu ubicación GPS. Por favor haz clic directamente en el mapa.');
+          document.getElementById('desglose-traslado-label').textContent = 'Traslado:';
+        }
+      );
+    }
+
+    function buscarDireccionEnMapa() {
+      var query = document.getElementById('buscador-mapa').value.trim();
+      if (!query) return;
+
+      var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(query);
+      fetch(url)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data && data.length > 0) {
+            var lat = parseFloat(data[0].lat);
+            var lon = parseFloat(data[0].lon);
+            leafletMap.setView([lat, lon], 15);
+            if (!document.getElementById('input-ubicacion').value.trim()) {
+              document.getElementById('input-ubicacion').value = query;
+            }
+            fijarDestinoEnMapa(lat, lon, false);
+          } else {
+            alert('No se encontró esa dirección. Intenta acercar el mapa y hacer clic manualmente.');
+          }
+        })
+        .catch(function() {
+          alert('No se pudo conectar con el buscador de direcciones.');
+        });
+    }
+
+    // =========================================================================
+    // SECCIÓN DE CALIFICACIONES
+    // =========================================================================
+    function seleccionarEstrellas(valor) {
+      estrellasSeleccionadas = valor;
+      var etiquetas = {
+        1: '1 de 5 estrellas (Malo)',
+        2: '2 de 5 estrellas (Regular)',
+        3: '3 de 5 estrellas (Bueno)',
+        4: '4 de 5 estrellas (Muy bueno)',
+        5: '5 de 5 estrellas (Excelente)'
+      };
+      document.getElementById('star-label').textContent = etiquetas[valor] || '';
+
+      var botones = document.querySelectorAll('.star-btn');
+      for (var i = 0; i < botones.length; i++) {
+        var btnVal = parseInt(botones[i].getAttribute('data-val'), 10);
+        if (btnVal <= valor) {
+          botones[i].classList.remove('text-slate-300');
+          botones[i].classList.add('text-amber-400');
+        } else {
+          botones[i].classList.remove('text-amber-400');
+          botones[i].classList.add('text-slate-300');
+        }
+      }
+    }
+
+    function renderizarResenas() {
+      var grid = document.getElementById('grid-resenas');
+      var lista = appData.resenas || [];
+
+      if (lista.length === 0) {
+        document.getElementById('promedio-estrellas').textContent = '5.0';
+        document.getElementById('total-resenas-texto').textContent = 'Sé el primero en calificar nuestro ministerio';
+        grid.innerHTML = '<p class="col-span-full text-sm text-slate-500 bg-white p-6 rounded-2xl border border-slate-200">Aún no hay comentarios publicados.</p>';
+        return;
+      }
+
+      var suma = 0;
+      var html = '';
+      for (var i = 0; i < lista.length; i++) {
+        var r = lista[i];
+        suma += Number(r.estrellas) || 5;
+
+        var estrellasHtml = '';
+        for (var s = 1; s <= 5; s++) {
+          if (s <= r.estrellas) {
+            estrellasHtml += '<i class="fas fa-star text-amber-400"></i>';
+          } else {
+            estrellasHtml += '<i class="fas fa-star text-slate-200"></i>';
+          }
+        }
+
+        var comentarioHtml = r.comentario
+          ? '<p class="text-slate-600 text-xs leading-relaxed mt-3 italic">"' + escapeHTML(r.comentario) + '"</p>'
+          : '<p class="text-slate-400 text-xs mt-3 italic">Calificación sin comentario adicional.</p>';
+
+        html +=
+          '<div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col justify-between">' +
+            '<div>' +
+              '<div class="flex justify-between items-center">' +
+                '<div class="text-xs space-x-0.5">' + estrellasHtml + '</div>' +
+                '<span class="text-[11px] text-slate-400">' + escapeHTML(r.fecha) + '</span>' +
+              '</div>' +
+              comentarioHtml +
+            '</div>' +
+            '<div class="mt-4 pt-3 border-t border-slate-100 flex items-center space-x-2">' +
+              '<div class="w-7 h-7 rounded-full bg-slate-800 text-white text-xs font-bold flex items-center justify-center">' +
+                escapeHTML(r.nombre.charAt(0).toUpperCase()) +
+              '</div>' +
+              '<span class="text-xs font-bold text-slate-800">' + escapeHTML(r.nombre) + '</span>' +
+            '</div>' +
+          '</div>';
+      }
+
+      var promedio = (suma / lista.length).toFixed(1);
+      document.getElementById('promedio-estrellas').textContent = promedio;
+      document.getElementById('total-resenas-texto').textContent = 'Basado en ' + lista.length + (lista.length === 1 ? ' calificación' : ' calificaciones');
+      grid.innerHTML = html;
+    }
+
+    function enviarCalificacion() {
+      if (!sessionToken) {
+        pendingActionAfterAuth = 'resena';
+        abrirModalAuth();
+        mostrarMensajeAuth('Inicia sesión con tu correo electrónico para publicar tu calificación.', false);
+        return;
+      }
+
+      var nombre = document.getElementById('resena-nombre').value.trim();
+      var comentario = document.getElementById('resena-comentario').value.trim();
+      var btn = document.getElementById('btn-enviar-resena');
+
+      btn.disabled = true;
+      btn.textContent = 'Publicando...';
+
+      apiCall('guardarResenaCliente', {
+        token: sessionToken,
+        estrellas: estrellasSeleccionadas,
+        nombre: nombre,
+        comentario: comentario
+      })
+        .then(function(res) {
+          btn.disabled = false;
+          btn.textContent = 'Publicar Calificación';
+
+          if (res.sessionExpired) {
+            cerrarSesion(false);
+            pendingActionAfterAuth = 'resena';
+            abrirModalAuth();
+            mostrarMensajeAuth(res.message, true);
+            return;
+          }
+
+          if (res.success) {
+            appData.resenas = res.resenasActualizadas || [];
+            document.getElementById('resena-comentario').value = '';
+            seleccionarEstrellas(5);
+            renderizarResenas();
+            alert('¡Muchas gracias! Tu calificación ha sido publicada.');
+            reiniciarTemporizadorInactividad();
+          } else {
+            alert(res.message);
+          }
+        })
+        .catch(function(err) {
+          btn.disabled = false;
+          btn.textContent = 'Publicar Calificación';
+          alert('Error al guardar calificación: ' + err.message);
+        });
+    }
+
+    // =========================================================================
+    // MIS RESERVACIONES
+    // =========================================================================
+    function abrirMisReservaciones() {
+      if (!sessionToken || !userEmail) {
+        pendingActionAfterAuth = 'mis_reservas';
+        abrirModalAuth();
+        mostrarMensajeAuth('Inicia sesión con tu correo electrónico para ver tus reservaciones.', false);
+        return;
+      }
+
+      document.getElementById('mis-reservas-email').textContent = userEmail;
+      document.getElementById('modal-mis-reservas').classList.remove('hidden');
+      cargarMisReservaciones();
+    }
+
+    function cerrarMisReservaciones() {
+      document.getElementById('modal-mis-reservas').classList.add('hidden');
+    }
+
+    function cargarMisReservaciones() {
+      var contenedor = document.getElementById('lista-mis-reservas');
+      contenedor.innerHTML =
+        '<div class="text-center py-12 text-slate-400">' +
+          '<i class="fas fa-spinner fa-spin text-3xl mb-3 text-slate-600"></i>' +
+          '<p class="text-sm">Consultando tus reservaciones...</p>' +
+        '</div>';
+
+      apiCall('obtenerMisReservaciones', { token: sessionToken })
+        .then(function(res) {
+          if (res.sessionExpired) {
+            cerrarMisReservaciones();
+            cerrarSesion(false);
+            pendingActionAfterAuth = 'mis_reservas';
+            abrirModalAuth();
+            mostrarMensajeAuth(res.message, true);
+            return;
+          }
+
+          if (!res.success) {
+            contenedor.innerHTML = '<p class="text-center text-red-600 text-sm">' + escapeHTML(res.message) + '</p>';
+            return;
+          }
+
+          var lista = res.reservas || [];
+          document.getElementById('mis-reservas-count').textContent = lista.length + (lista.length === 1 ? ' reserva' : ' reservas');
+
+          if (lista.length === 0) {
+            contenedor.innerHTML =
+              '<div class="text-center py-12 text-slate-400">' +
+                '<i class="far fa-calendar-times text-4xl mb-3 text-slate-300"></i>' +
+                '<p class="text-sm font-semibold text-slate-700">Aún no tienes reservaciones registradas</p>' +
+                '<p class="text-xs mt-1">Selecciona un servicio en el catálogo para agendar tu primera fecha.</p>' +
+              '</div>';
+            return;
+          }
+
+          var html = '';
+          for (var i = 0; i < lista.length; i++) {
+            var r = lista[i];
+            var badgeClass = 'bg-amber-100 text-amber-800 border-amber-300';
+            var iconClass = 'fas fa-hourglass-half';
+
+            if (r.estado === 'CONFIRMADA' || r.estado === 'CONFIRMADO') {
+              badgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+              iconClass = 'fas fa-check-circle';
+            } else if (r.estado === 'CANCELADA' || r.estado === 'CANCELADO') {
+              badgeClass = 'bg-red-100 text-red-800 border-red-300';
+              iconClass = 'fas fa-times-circle';
+            }
+
+            var extras = [];
+            if (r.costoTraslado > 0) extras.push('Traslado: $' + Number(r.costoTraslado).toLocaleString('es-MX', { minimumFractionDigits: 2 }));
+            if (r.descuento > 0) extras.push('Descuento (' + r.cupon + '): -$' + Number(r.descuento).toLocaleString('es-MX', { minimumFractionDigits: 2 }));
+            var extrasTexto = extras.length > 0 ? ' (' + extras.join(' | ') + ')' : '';
+
+            html +=
+              '<div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow transition">' +
+                '<div class="flex flex-wrap justify-between items-start gap-2 border-b border-slate-100 pb-3">' +
+                  '<div>' +
+                    '<span class="text-[11px] font-mono text-slate-400 block">Folio: ' + escapeHTML(r.idReserva) + '</span>' +
+                    '<h4 class="font-bold text-slate-900 text-base">' + escapeHTML(r.servicio) + '</h4>' +
+                  '</div>' +
+                  '<span class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold border ' + badgeClass + '">' +
+                    '<i class="' + iconClass + '"></i>' +
+                    '<span>' + escapeHTML(r.estado) + '</span>' +
+                  '</span>' +
+                '</div>' +
+                '<div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-3 text-xs text-slate-600">' +
+                  '<div><i class="far fa-calendar text-slate-400 mr-1"></i> <strong>Fecha:</strong> ' + escapeHTML(r.fechaEvento) + '</div>' +
+                  '<div><i class="far fa-clock text-slate-400 mr-1"></i> <strong>Hora:</strong> ' + escapeHTML(r.horaEvento) + ' hrs</div>' +
+                  '<div class="sm:text-right font-bold text-slate-900 text-sm">$' + Number(r.precio).toLocaleString('es-MX', { minimumFractionDigits: 2 }) + '</div>' +
+                '</div>' +
+                '<div class="mt-2 text-xs text-slate-600">' +
+                  '<i class="fas fa-map-marker-alt text-slate-400 mr-1"></i> <strong>Ubicación:</strong> ' + escapeHTML(r.ubicacion) + escapeHTML(extrasTexto) +
+                '</div>' +
+              '</div>';
+          }
+          contenedor.innerHTML = html;
+          reiniciarTemporizadorInactividad();
+        })
+        .catch(function(err) {
+          contenedor.innerHTML = '<p class="text-center text-red-600 text-sm">Error al cargar: ' + escapeHTML(err.message) + '</p>';
+        });
+    }
+
+    // =========================================================================
+    // SERVICIOS Y CALENDARIO INTELIGENTE
+    // =========================================================================
+    function renderizarServicios() {
+      document.getElementById('loader-servicios').classList.add('hidden');
+      var grid = document.getElementById('grid-servicios');
+      grid.classList.remove('hidden');
+
+      if (!appData.servicios || appData.servicios.length === 0) {
+        grid.innerHTML = '<p class="col-span-full text-center text-slate-500">No hay servicios disponibles por el momento.</p>';
+        return;
+      }
+
+      var html = '';
+      for (var i = 0; i < appData.servicios.length; i++) {
+        var srv = appData.servicios[i];
+        var fallbackImg = 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80';
+        var imgSrc = srv.imagen ? escapeHTML(srv.imagen) : fallbackImg;
+        html +=
+          '<div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200/80 flex flex-col">' +
+            '<div class="h-48 overflow-hidden relative bg-slate-200">' +
+              '<img src="' + imgSrc + '" alt="' + escapeHTML(srv.nombre) + '" class="w-full h-full object-cover hover:scale-105 transition duration-500">' +
+              '<span class="absolute top-3 right-3 bg-white/95 backdrop-blur text-slate-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">' +
+                '<i class="far fa-clock mr-1"></i>' + escapeHTML(srv.duracion) +
+              '</span>' +
+            '</div>' +
+            '<div class="p-5 flex-grow flex flex-col justify-between">' +
+              '<div>' +
+                '<h3 class="font-bold text-lg text-slate-900 leading-snug mb-2">' + escapeHTML(srv.nombre) + '</h3>' +
+                '<p class="text-slate-600 text-xs leading-relaxed mb-4">' + escapeHTML(srv.descripcion) + '</p>' +
+              '</div>' +
+              '<div class="pt-4 border-t border-slate-100 flex items-center justify-between">' +
+                '<div>' +
+                  '<span class="text-[11px] text-slate-400 block uppercase">Desde</span>' +
+                  '<span class="text-xl font-extrabold text-slate-900">$' + Number(srv.precio).toLocaleString('es-MX') + '</span>' +
+                '</div>' +
+                '<button type="button" onclick="abrirModalAgendar(\'' + escapeHTML(srv.id) + '\')" class="bg-brand-charcoal hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition shadow">' +
+                  'Agendar Fecha' +
+                '</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+      }
+      grid.innerHTML = html;
+    }
+
+    function obtenerBloquesCombinadosFecha(fechaStr) {
+      var lista = [];
+      var delServidor = (appData.bloquesOcupados && appData.bloquesOcupados[fechaStr]) ? appData.bloquesOcupados[fechaStr] : [];
+      for (var i = 0; i < delServidor.length; i++) {
+        lista.push({
+          inicio: delServidor[i].inicio,
+          fin: delServidor[i].fin,
+          origen: 'servidor'
+        });
+      }
+      for (var c = 0; c < carrito.length; c++) {
+        if (carrito[c].fecha === fechaStr) {
+          var ini = horaAMinutosJS(carrito[c].hora);
+          var dur = Number(carrito[c].duracionMinutos) || 60;
+          lista.push({
+            inicio: ini,
+            fin: ini + dur,
+            origen: 'carrito'
+          });
+        }
+      }
+      return lista;
+    }
+
+    function verificarSlotChoca(fechaStr, horaSlot, duracionServicioMin) {
+      var inicioPropuesto = horaAMinutosJS(horaSlot);
+      var finPropuesto = inicioPropuesto + duracionServicioMin;
+      var bloques = obtenerBloquesCombinadosFecha(fechaStr);
+
+      for (var i = 0; i < bloques.length; i++) {
+        var b = bloques[i];
+        if (inicioPropuesto < b.fin && finPropuesto > b.inicio) {
+          return b.origen;
+        }
+      }
+      return null;
+    }
+
+    function abrirModalAgendar(idServicio) {
+      servicioSeleccionado = null;
+      for (var i = 0; i < appData.servicios.length; i++) {
+        if (appData.servicios[i].id === idServicio) {
+          servicioSeleccionado = appData.servicios[i];
+          break;
+        }
+      }
+      if (!servicioSeleccionado) return;
+
+      horaSeleccionada = null;
+      trasladoActual = { calculado: false, calculando: false, lat: null, lng: null, distanciaKm: 0, costoTraslado: 0 };
+
+      var precioBaseFormatted = '$' + Number(servicioSeleccionado.precio).toLocaleString('es-MX', { minimumFractionDigits: 2 });
+      document.getElementById('modal-srv-titulo').textContent = servicioSeleccionado.nombre;
+      document.getElementById('modal-srv-duracion').textContent = servicioSeleccionado.duracion;
+      document.getElementById('desglose-base').textContent = precioBaseFormatted;
+      document.getElementById('desglose-traslado-label').textContent = 'Traslado:';
+      document.getElementById('desglose-traslado').textContent = '$0.00';
+      document.getElementById('modal-srv-precio').textContent = precioBaseFormatted + ' MXN';
+
+      document.getElementById('input-ubicacion').value = '';
+      document.getElementById('buscador-mapa').value = '';
+      document.getElementById('error-agendar').classList.add('hidden');
+      document.getElementById('contenedor-horas').innerHTML = '<p class="col-span-full text-xs text-slate-400 italic py-2">Elige primero una fecha.</p>';
+
+      var inputFecha = document.getElementById('input-fecha');
+      inputFecha.value = '';
+      inputFecha.placeholder = 'Sincronizando disponibilidad...';
+      document.getElementById('modal-agendar').classList.remove('hidden');
+
+      inicializarMapaTraslado();
+
+      apiCall('consultarDisponibilidadActual', {})
+        .then(function(res) {
+          if (res && res.bloques) {
+            appData.bloquesOcupados = res.bloques;
+          }
+          inicializarCalendarioAgendar();
+        })
+        .catch(function() {
+          inicializarCalendarioAgendar();
+        });
+    }
+
+    function inicializarCalendarioAgendar() {
+      var fechasLlenas = [];
+      var duracionActualMin = Number(servicioSeleccionado.duracionMinutos) || 60;
+      var todasLasFechas = {};
+
+      var ocupadosKeys = Object.keys(appData.bloquesOcupados || {});
+      for (var k = 0; k < ocupadosKeys.length; k++) {
+        todasLasFechas[ocupadosKeys[k]] = true;
+      }
+      for (var c = 0; c < carrito.length; c++) {
+        todasLasFechas[carrito[c].fecha] = true;
+      }
+
+      var fechasUnicas = Object.keys(todasLasFechas);
+      for (var f = 0; f < fechasUnicas.length; f++) {
+        var fecha = fechasUnicas[f];
+        var tieneAlMenosUnHorarioLibre = false;
+        for (var h = 0; h < appData.horariosBase.length; h++) {
+          if (!verificarSlotChoca(fecha, appData.horariosBase[h], duracionActualMin)) {
+            tieneAlMenosUnHorarioLibre = true;
+            break;
+          }
+        }
+        if (!tieneAlMenosUnHorarioLibre) {
+          fechasLlenas.push(fecha);
+        }
+      }
+
+      if (flatpickrInstance) {
+        flatpickrInstance.destroy();
+      }
+
+      var inputFecha = document.getElementById('input-fecha');
+      inputFecha.placeholder = 'Clic para elegir fecha...';
+
+      flatpickrInstance = flatpickr(inputFecha, {
+        locale: 'es',
+        minDate: 'today',
+        dateFormat: 'Y-m-d',
+        disable: fechasLlenas,
+        onChange: function(selectedDates, dateStr) {
+          renderizarHorasDisponibles(dateStr);
+        }
+      });
+    }
+
+    function cerrarModalAgendar() {
+      document.getElementById('modal-agendar').classList.add('hidden');
+    }
+
+    function renderizarHorasDisponibles(fechaStr) {
+      horaSeleccionada = null;
+      var contenedor = document.getElementById('contenedor-horas');
+      var duracionActualMin = Number(servicioSeleccionado.duracionMinutos) || 60;
+
+      var ahora = new Date();
+      var mes = String(ahora.getMonth() + 1);
+      if (mes.length < 2) mes = '0' + mes;
+      var dia = String(ahora.getDate());
+      if (dia.length < 2) dia = '0' + dia;
+      var hoyStr = ahora.getFullYear() + '-' + mes + '-' + dia;
+      var horaActualMinutos = ahora.getHours() * 60 + ahora.getMinutes();
+
+      var html = '';
+      for (var i = 0; i < appData.horariosBase.length; i++) {
+        var hora = String(appData.horariosBase[i]).trim();
+        var slotMinutos = horaAMinutosJS(hora);
+
+        var conflicto = verificarSlotChoca(fechaStr, hora, duracionActualMin);
+        var yaPasoHoy = (fechaStr === hoyStr && slotMinutos <= horaActualMinutos + 60);
+        var deshabilitada = (conflicto !== null) || yaPasoHoy;
+
+        if (deshabilitada) {
+          html += '<button type="button" disabled title="No disponible" class="py-1.5 px-1 rounded-lg text-[11px] font-semibold bg-red-50 text-red-400 border border-red-200 line-through cursor-not-allowed">' + hora + '</button>';
+        } else {
+          html += '<button type="button" onclick="seleccionarHora(this, \'' + hora + '\')" class="btn-hora py-1.5 px-1 rounded-lg text-[11px] font-semibold bg-white text-slate-700 border border-slate-300 hover:border-slate-800 transition">' + hora + '</button>';
+        }
+      }
+      contenedor.innerHTML = html;
+    }
+
+    function seleccionarHora(btn, hora) {
+      var botones = document.querySelectorAll('.btn-hora');
+      for (var i = 0; i < botones.length; i++) {
+        botones[i].classList.remove('bg-brand-charcoal', 'text-white', 'border-slate-800');
+        botones[i].classList.add('bg-white', 'text-slate-700', 'border-slate-300');
+      }
+      btn.classList.remove('bg-white', 'text-slate-700', 'border-slate-300');
+      btn.classList.add('bg-brand-charcoal', 'text-white', 'border-slate-800');
+      horaSeleccionada = hora;
+    }
+
+    function agregarAlCarrito() {
+      var fecha = document.getElementById('input-fecha').value;
+      var ubicacion = document.getElementById('input-ubicacion').value.trim();
+      var errorDiv = document.getElementById('error-agendar');
+
+      if (!fecha) {
+        errorDiv.textContent = 'Por favor selecciona una fecha disponible en el calendario.';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (!horaSeleccionada) {
+        errorDiv.textContent = 'Por favor selecciona un horario disponible.';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (trasladoActual.calculando) {
+        errorDiv.textContent = 'Espera un segundo mientras se calcula el costo de traslado...';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (!trasladoActual.calculado || trasladoActual.lat === null) {
+        errorDiv.textContent = 'Por favor marca el punto exacto del evento en el mapa.';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (ubicacion.length < 4) {
+        errorDiv.textContent = 'Por favor escribe el nombre de la parroquia, salón o referencia del lugar.';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+
+      var duracionActualMin = Number(servicioSeleccionado.duracionMinutos) || 60;
+      if (verificarSlotChoca(fecha, horaSeleccionada, duracionActualMin)) {
+        errorDiv.textContent = 'Este horario se cruza con otro servicio ya apartado. Por favor elige otro.';
+        errorDiv.classList.remove('hidden');
+        renderizarHorasDisponibles(fecha);
+        return;
+      }
+
+      var precioBaseNum = Number(servicioSeleccionado.precio) || 0;
+      var costoTrasladoNum = Number(trasladoActual.costoTraslado) || 0;
+
+      carrito.push({
+        uid: Date.now(),
+        id: servicioSeleccionado.id,
+        nombre: servicioSeleccionado.nombre,
+        precioBase: precioBaseNum,
+        distanciaKm: trasladoActual.distanciaKm,
+        costoTraslado: costoTrasladoNum,
+        precio: precioBaseNum + costoTrasladoNum,
+        duracion: servicioSeleccionado.duracion,
+        duracionMinutos: duracionActualMin,
+        fecha: fecha,
+        hora: horaSeleccionada,
+        ubicacion: ubicacion,
+        lat: trasladoActual.lat,
+        lng: trasladoActual.lng
+      });
+
+      if (cuponAplicado) {
+        var nuevoSub = obtenerSubtotalCarrito();
+        if (cuponAplicado.tipo === 'PORCENTAJE') {
+          cuponAplicado.descuento = Math.round((nuevoSub * (cuponAplicado.valor / 100)) * 100) / 100;
+        } else {
+          cuponAplicado.descuento = Math.min(nuevoSub, cuponAplicado.valor);
+        }
+      }
+
+      cerrarModalAgendar();
+      actualizarCarritoUI();
+      toggleCarrito(true);
+    }
+
+    function eliminarDelCarrito(uid) {
+      var nuevoCarrito = [];
+      for (var i = 0; i < carrito.length; i++) {
+        if (carrito[i].uid !== uid) {
+          nuevoCarrito.push(carrito[i]);
+        }
+      }
+      carrito = nuevoCarrito;
+
+      if (carrito.length === 0) {
+        quitarCupon();
+      } else if (cuponAplicado) {
+        var nuevoSub = obtenerSubtotalCarrito();
+        if (cuponAplicado.tipo === 'PORCENTAJE') {
+          cuponAplicado.descuento = Math.round((nuevoSub * (cuponAplicado.valor / 100)) * 100) / 100;
+        } else {
+          cuponAplicado.descuento = Math.min(nuevoSub, cuponAplicado.valor);
+        }
+      }
+      actualizarCarritoUI();
+    }
+
+    function actualizarCarritoUI() {
+      document.getElementById('cart-badge').textContent = carrito.length;
+      var container = document.getElementById('carrito-items');
+      var footer = document.getElementById('carrito-footer');
+
+      if (carrito.length === 0) {
+        container.innerHTML =
+          '<div class="text-center py-16 text-slate-400">' +
+            '<i class="fas fa-calendar-times text-4xl mb-3 text-slate-300"></i>' +
+            '<p class="text-sm font-medium text-slate-600">Tu carrito está vacío</p>' +
+            '<p class="text-xs mt-1">Selecciona un servicio y aparta tu fecha en el calendario.</p>' +
+          '</div>';
+        footer.classList.add('hidden');
+        return;
+      }
+
+      var subtotal = 0;
+      var html = '';
+      for (var i = 0; i < carrito.length; i++) {
+        var item = carrito[i];
+        subtotal += Number(item.precio);
+        html +=
+          '<div class="bg-slate-50 border border-slate-200 rounded-xl p-4 relative">' +
+            '<button type="button" onclick="eliminarDelCarrito(' + item.uid + ')" class="absolute top-3 right-3 text-slate-400 hover:text-red-500 text-sm">' +
+              '<i class="fas fa-trash-alt"></i>' +
+            '</button>' +
+            '<h4 class="font-bold text-sm text-slate-900 pr-6">' + escapeHTML(item.nombre) + '</h4>' +
+            '<div class="mt-2 space-y-1 text-xs text-slate-600">' +
+              '<p><i class="far fa-calendar text-slate-500 w-4"></i> <strong>Fecha:</strong> ' + escapeHTML(item.fecha) + ' a las ' + escapeHTML(item.hora) + ' hrs</p>' +
+              '<p><i class="fas fa-map-marker-alt text-slate-500 w-4"></i> <strong>Lugar:</strong> ' + escapeHTML(item.ubicacion) + '</p>' +
+              '<p class="text-blue-700"><i class="fas fa-route w-4"></i> <strong>Traslado:</strong> +$' + Number(item.costoTraslado).toLocaleString('es-MX', { minimumFractionDigits: 2 }) + '</p>' +
+            '</div>' +
+            '<div class="mt-3 pt-2 border-t border-slate-200/80 flex justify-between items-center">' +
+              '<span class="text-xs text-slate-500">Subtotal (Servicio + Traslado)</span>' +
+              '<span class="font-bold text-slate-900">$' + Number(item.precio).toLocaleString('es-MX', { minimumFractionDigits: 2 }) + '</span>' +
+            '</div>' +
+          '</div>';
+      }
+      container.innerHTML = html;
+
+      var descuento = cuponAplicado ? (Number(cuponAplicado.descuento) || 0) : 0;
+      var totalFinal = Math.max(0, subtotal - descuento);
+
+      if (descuento > 0 && cuponAplicado) {
+        document.getElementById('fila-subtotal').classList.remove('hidden');
+        document.getElementById('carrito-subtotal').textContent = '$' + subtotal.toLocaleString('es-MX', { minimumFractionDigits: 2 });
+        document.getElementById('fila-descuento').classList.remove('hidden');
+        document.getElementById('carrito-descuento-label').textContent = 'Descuento (' + cuponAplicado.codigo + '):';
+        document.getElementById('carrito-descuento').textContent = '-$' + descuento.toLocaleString('es-MX', { minimumFractionDigits: 2 });
+      } else {
+        document.getElementById('fila-subtotal').classList.add('hidden');
+        document.getElementById('fila-descuento').classList.add('hidden');
+      }
+
+      document.getElementById('carrito-total').textContent = '$' + totalFinal.toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
+      footer.classList.remove('hidden');
+    }
+
+    function toggleCarrito(forzarAbrir) {
+      var drawer = document.getElementById('drawer-carrito');
+      if (forzarAbrir === true) {
+        drawer.classList.remove('hidden');
+        drawer.classList.add('flex');
+      } else if (forzarAbrir === false) {
+        drawer.classList.add('hidden');
+        drawer.classList.remove('flex');
+      } else {
+        drawer.classList.toggle('hidden');
+        drawer.classList.toggle('flex');
+      }
+    }
+
+    // =========================================================================
+    // AUTENTICACIÓN POR CORREO ELECTRÓNICO (OTP)
+    // =========================================================================
+    function abrirModalAuth() {
+      volverPaso1Auth();
+      document.getElementById('auth-mensaje').classList.add('hidden');
+      document.getElementById('modal-auth').classList.remove('hidden');
+    }
+
+    function cerrarModalAuth() {
+      document.getElementById('modal-auth').classList.add('hidden');
+    }
+
+    function volverPaso1Auth() {
+      document.getElementById('auth-step-1').classList.remove('hidden');
+      document.getElementById('auth-step-2').classList.add('hidden');
+    }
+
+    function mostrarMensajeAuth(texto, esError) {
+      var box = document.getElementById('auth-mensaje');
+      box.textContent = texto;
+      var estilo = esError ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+      box.className = 'mt-4 text-xs p-3 rounded-lg ' + estilo;
+      box.classList.remove('hidden');
+    }
+
+    function solicitarCodigoOTP() {
+      var email = document.getElementById('auth-email').value.trim();
+
+      if (!email || email.indexOf('@') === -1) {
+        mostrarMensajeAuth('Ingresa un correo electrónico válido.', true);
+        return;
+      }
+
+      var btn = document.getElementById('btn-enviar-otp');
+      btn.disabled = true;
+      btn.textContent = 'Enviando código...';
+      document.getElementById('auth-mensaje').classList.add('hidden');
+
+      apiCall('enviarCodigoAutenticacion', { email: email })
+        .then(function(res) {
+          btn.disabled = false;
+          btn.textContent = 'Enviar Código al Correo';
+          if (res.success) {
+            document.getElementById('auth-destino-display').textContent = email;
+            document.getElementById('auth-step-1').classList.add('hidden');
+            document.getElementById('auth-step-2').classList.remove('hidden');
+            document.getElementById('auth-otp').value = '';
+            document.getElementById('auth-otp').focus();
+          } else {
+            mostrarMensajeAuth(res.message, true);
+          }
+        })
+        .catch(function(err) {
+          btn.disabled = false;
+          btn.textContent = 'Enviar Código al Correo';
+          mostrarMensajeAuth('Error de conexión: ' + err.message, true);
+        });
+    }
+
+    function validarCodigoOTP() {
+      var email = document.getElementById('auth-email').value.trim();
+      var codigo = document.getElementById('auth-otp').value.trim();
+
+      if (codigo.length !== 6) {
+        mostrarMensajeAuth('El código debe tener 6 dígitos.', true);
+        return;
+      }
+
+      var btn = document.getElementById('btn-verificar-otp');
+      btn.disabled = true;
+      btn.textContent = 'Verificando...';
+
+      apiCall('verificarCodigoOTP', { email: email, codigo: codigo })
+        .then(function(res) {
+          btn.disabled = false;
+          btn.textContent = 'Verificar y Entrar';
+          if (res.success) {
+            sessionToken = res.token;
+            userEmail = res.email;
+            sessionStorage.setItem('kerigma_token', sessionToken);
+            sessionStorage.setItem('kerigma_email', userEmail);
+            if (res.perfil) {
+              if (res.perfil.nombre) sessionStorage.setItem('kerigma_nombre', res.perfil.nombre);
+              if (res.perfil.telefono) sessionStorage.setItem('kerigma_telefono', res.perfil.telefono);
+            }
+            cerrarModalAuth();
+            actualizarUIUsuario();
+
+            if (pendingActionAfterAuth === 'checkout') {
+              pendingActionAfterAuth = null;
+              toggleCarrito(true);
+            } else if (pendingActionAfterAuth === 'mis_reservas') {
+              pendingActionAfterAuth = null;
+              abrirMisReservaciones();
+            } else if (pendingActionAfterAuth === 'resena') {
+              pendingActionAfterAuth = null;
+              enviarCalificacion();
+            }
+          } else {
+            mostrarMensajeAuth(res.message, true);
+          }
+        })
+        .catch(function(err) {
+          btn.disabled = false;
+          btn.textContent = 'Verificar y Entrar';
+          mostrarMensajeAuth('Error: ' + err.message, true);
+        });
+    }
+
+    function finalizarCompra() {
+      if (carrito.length === 0) return;
+
+      if (!sessionToken) {
+        pendingActionAfterAuth = 'checkout';
+        toggleCarrito(false);
+        abrirModalAuth();
+        mostrarMensajeAuth('Inicia sesión con tu correo electrónico para enviar tu solicitud de reserva.', false);
+        return;
+      }
+
+      var nombre = document.getElementById('checkout-nombre').value.trim();
+      var telefono = document.getElementById('checkout-telefono').value.trim();
+
+      if (!nombre || !telefono) {
+        alert('Por favor ingresa tu nombre completo y teléfono de contacto en el carrito.');
+        return;
+      }
+
+      var btn = document.getElementById('btn-confirmar-compra');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Enviando solicitud...</span>';
+
+      var payload = {
+        token: sessionToken,
+        nombreCliente: nombre,
+        telefonoCliente: telefono,
+        cuponCodigo: cuponAplicado ? cuponAplicado.codigo : '',
+        items: carrito
+      };
+
+      apiCall('procesarReservaCarrito', payload)
+        .then(function(res) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-paper-plane"></i><span>Enviar Solicitud de Reserva</span>';
+
+          if (res.sessionExpired) {
+            cerrarSesion(false);
+            pendingActionAfterAuth = 'checkout';
+            toggleCarrito(false);
+            abrirModalAuth();
+            mostrarMensajeAuth(res.message, true);
+            return;
+          }
+
+          if (res.success) {
+            sessionStorage.setItem('kerigma_nombre', nombre);
+            sessionStorage.setItem('kerigma_telefono', telefono);
+            appData.bloquesOcupados = res.bloquesActualizados;
+            carrito = [];
+            quitarCupon();
+            actualizarCarritoUI();
+            toggleCarrito(false);
+            document.getElementById('exito-folio').textContent = res.folio;
+            document.getElementById('modal-exito').classList.remove('hidden');
+            reiniciarTemporizadorInactividad();
+          } else {
+            alert(res.message);
+          }
+        })
+        .catch(function(err) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-paper-plane"></i><span>Enviar Solicitud de Reserva</span>';
+          alert('Ocurrió un error inesperado: ' + err.message);
+        });
+    }
+  </script>
+</body>
+</html>
