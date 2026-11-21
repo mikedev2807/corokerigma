@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kerigma</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%234b4b4d'/%3E%3Cg transform='translate(20, 32) rotate(-25)'%3E%3Crect x='10' y='0' width='9' height='36' rx='1.5' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3Crect x='0' y='9' width='29' height='9' rx='1.5' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3C/g%3E%3Cpath d='M 44 58 Q 62 46, 76 64 T 106 54' fill='none' stroke='%23ffffff' stroke-width='2.5'/%3E%3Ccircle cx='58' cy='56' r='4.5' fill='%23ffffff'/%3E%3Ccircle cx='72' cy='62' r='4.5' fill='%23ffffff'/%3E%3Ccircle cx='96' cy='58' r='5' fill='%23ffffff'/%3E%3Ctext x='60' y='102' font-family='Arial, sans-serif' font-weight='900' font-size='22' letter-spacing='2' fill='%23ffffff' text-anchor='middle'%3EKRG%3C/text%3E%3C/svg%3E">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -30,6 +31,61 @@
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
 </head>
+  <!-- MODAL 4: POLÍTICA DE PRIVACIDAD -->
+  <div id="modal-privacidad" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[88vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="bg-brand-charcoal text-white px-6 py-4 flex justify-between items-center shrink-0">
+        <div>
+          <span class="text-[11px] text-amber-300 font-semibold uppercase tracking-wider">Aviso Legal y Protección de Datos</span>
+          <h3 class="font-bold text-lg">Política de Privacidad — Kerigma</h3>
+        </div>
+        <button type="button" onclick="cerrarModalPrivacidad()" class="text-slate-300 hover:text-white text-xl"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed flex-grow">
+        <p class="font-semibold text-slate-900">Última actualización: Noviembre 2026</p>
+        <p>
+          <strong>Kerigma ("El que canta ora dos veces")</strong> respeta tu privacidad y se compromete a proteger los datos personales que nos proporcionas a través de nuestra plataforma de reservaciones en línea.
+        </p>
+
+        <h4 class="font-bold text-slate-900 text-sm pt-2">1. Datos personales que recopilamos</h4>
+        <p>Para brindarte nuestros servicios y calcular costos de traslado, podremos recabar y almacenar de forma segura los siguientes datos:</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><strong>Datos de identificación y contacto:</strong> Nombre completo, correo electrónico y número telefónico / WhatsApp.</li>
+          <li><strong>Datos de ubicación del evento:</strong> Dirección textual, parroquia o salón, así como coordenadas geográficas seleccionadas en el mapa o mediante GPS (únicamente cuando tú lo autorizas expresamente para calcular la distancia de traslado).</li>
+          <li><strong>Historial de servicios:</strong> Fechas, horarios reservaciones, comprobantes y calificaciones publicadas.</li>
+        </ul>
+
+        <h4 class="font-bold text-slate-900 text-sm pt-2">2. Finalidad del uso de tus datos</h4>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Validar tu identidad mediante códigos temporales de seguridad enviados a tu correo electrónico.</li>
+          <li>Gestionar, confirmar o cancelar tus solicitudes de reservación y emitir comprobantes en formato PDF.</li>
+          <li>Calcular la ruta y tarifa de traslado hacia el lugar de tu evento.</li>
+          <li>Contactarte vía correo electrónico o WhatsApp para coordinar detalles logísticos de tu evento.</li>
+        </ul>
+
+        <h4 class="font-bold text-slate-900 text-sm pt-2">3. Resguardo y Derechos ARCO</h4>
+        <p>
+          Tus datos no se venden ni comparten con terceros con fines publicitarios. Puedes solicitar el acceso, rectificación o eliminación de tu historial de contacto en cualquier momento enviando un mensaje a nuestro correo oficial de atención kerigma104@gmail.com.
+        </p>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4">
+          <span class="text-xs text-slate-600"><i class="far fa-file-pdf text-red-600 mr-1.5"></i>¿Prefieres consultar o descargar el documento oficial?</span>
+          <a href="https://docs.google.com/document/d/1m3aKK8MFD2oXpwZEClnMBc5sfaeNFcR1TOkhQ7S9nRo/edit?tab=t.0" target="_blank" rel="noopener noreferrer"
+             class="inline-flex items-center justify-center bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 px-3.5 py-2 rounded-lg text-xs font-bold transition shrink-0">
+            <i class="fas fa-external-link-alt mr-1.5"></i> Ver en Drive
+          </a>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-200 flex justify-end space-x-3 shrink-0">
+        <button type="button" onclick="cerrarModalPrivacidad()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">Cerrar</button>
+        <button type="button" onclick="aceptarPoliticaDesdeModal()" class="bg-brand-charcoal hover:bg-slate-800 text-white px-5 py-2 rounded-xl text-xs font-bold shadow transition">
+          <i class="fas fa-check mr-1"></i> Aceptar Política de Privacidad
+        </button>
+      </div>
+    </div>
+  </div>
 <body class="min-h-screen flex flex-col">
 
   <!-- NAVBAR -->
@@ -265,7 +321,8 @@
         <p class="tracking-widest text-slate-500 text-[11px] uppercase">El que canta ora dos veces</p>
       </div>
       <p class="text-xs text-slate-400">© 2026 Kerigma. Todos los derechos reservados. Sistema protegido con cierre de sesión automático.</p>
-    </div>
+      <button type="button" onclick="abrirModalPrivacidad()" class="underline hover:text-slate-900">Política de Privacidad</button>
+      </div>
   </footer>
 
   <!-- MODAL 1: AGENDAR FECHA, HORA Y MAPA DE TRASLADO -->
@@ -377,7 +434,20 @@
                    class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 text-sm">
           </div>
 
-          <button type="button" id="btn-enviar-otp" onclick="solicitarCodigoOTP()" class="w-full bg-brand-charcoal hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow-md transition">
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-start space-x-2.5">
+            <input type="checkbox" id="check-privacidad" onchange="toggleBotonOTP()"
+                   class="mt-1 h-4 w-4 rounded border-slate-300 text-slate-800 focus:ring-slate-600 cursor-pointer">
+            <label for="check-privacidad" class="text-xs text-slate-600 leading-relaxed cursor-pointer">
+              He leído y acepto la
+              <button type="button" onclick="abrirModalPrivacidad()" class="text-slate-900 font-bold underline hover:text-blue-700">
+                Política de Privacidad
+              </button>
+              y autorizo el almacenamiento de mis datos (nombre, teléfono, correo y ubicación del evento) para gestionar mis reservaciones.
+            </label>
+          </div>
+
+          <button type="button" id="btn-enviar-otp" onclick="solicitarCodigoOTP()" disabled
+                  class="w-full bg-brand-charcoal hover:bg-slate-800 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl shadow-md transition">
             Enviar Código al Correo
           </button>
         </div>
@@ -687,6 +757,27 @@
       }
     }
 
+    function toggleBotonOTP() {
+      var aceptado = document.getElementById('check-privacidad').checked;
+      document.getElementById('btn-enviar-otp').disabled = !aceptado;
+    }
+
+    function abrirModalPrivacidad() {
+      document.getElementById('modal-privacidad').classList.remove('hidden');
+    }
+
+    function cerrarModalPrivacidad() {
+      document.getElementById('modal-privacidad').classList.add('hidden');
+    }
+
+    function aceptarPoliticaDesdeModal() {
+      document.getElementById('check-privacidad').checked = true;
+      toggleBotonOTP();
+      cerrarModalPrivacidad();
+    }
+
+    
+
     // =========================================================================
     // SECCIÓN MULTIMEDIA: 3 APARTADOS (CANTOS, ALABANZAS Y ROSARIOS)
     // =========================================================================
@@ -953,7 +1044,7 @@
           fijarDestinoEnMapa(pos.coords.latitude, pos.coords.longitude, true);
         },
         function() {
-          alert('No se pudo obtener tu ubicación GPS. Por favor haz clic directamente en el mapa.');
+          alert('No se pudo obtener tu ubicación GPS😔. Por favor activa los permisos de ubicación a tu navegador o marca tu ubicación directamente en el mapa.');
           document.getElementById('desglose-traslado-label').textContent = 'Traslado:';
         }
       );
@@ -1668,6 +1759,11 @@
           btn.textContent = 'Enviar Código al Correo';
           mostrarMensajeAuth('Error de conexión: ' + err.message, true);
         });
+
+      if (!document.getElementById('check-privacidad').checked) {
+        mostrarMensajeAuth('Debes aceptar la Política de Privacidad para continuar.', true);
+        return;
+      }
     }
 
     function validarCodigoOTP() {
