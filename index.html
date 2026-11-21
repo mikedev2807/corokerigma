@@ -86,6 +86,16 @@
       </div>
     </div>
   </div>
+
+  <!-- BOTÓN FLOTANTE DE WHATSAPP -->
+  <a href="https://wa.me/529811234567?text=Hola%20Kerigma,%20tengo%20una%20duda%20sobre%20una%20reservaci%C3%B3n."
+     target="_blank"
+     rel="noopener noreferrer"
+     title="Escríbenos por WhatsApp"
+     class="fixed bottom-5 right-5 z-40 w-13 h-13 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-xl flex items-center justify-center text-2xl hover:scale-105 transition">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
 <body class="min-h-screen flex flex-col">
 
   <!-- NAVBAR -->
@@ -313,16 +323,30 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
+   <!-- FOOTER -->
   <footer class="bg-white text-slate-600 py-10 border-t border-slate-200 text-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-6">
       <div class="text-center sm:text-left">
         <p class="font-black text-slate-800 text-lg tracking-widest">KERIGMA</p>
         <p class="tracking-widest text-slate-500 text-[11px] uppercase">El que canta ora dos veces</p>
       </div>
-      <p class="text-xs text-slate-400">© 2026 Kerigma. Todos los derechos reservados. Sistema protegido con cierre de sesión automático.</p>
-      <button type="button" onclick="abrirModalPrivacidad()" class="underline hover:text-slate-900">Política de Privacidad</button>
+
+      <div class="flex flex-col sm:flex-row items-center gap-4">
+        <a href="https://wa.me/529811379619?text=Hola%20Kerigma,%20me%20gustar%C3%ADa%20solicitar%20informaci%C3%B3n%20sobre%20sus%20servicios."
+           target="_blank"
+           rel="noopener noreferrer"
+           class="inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-full text-xs font-bold shadow-sm transition">
+          <i class="fab fa-whatsapp text-base"></i>
+          <span>Contáctanos por WhatsApp</span>
+        </a>
+
+        <button type="button" onclick="abrirModalPrivacidad()" class="text-xs text-slate-500 underline hover:text-slate-900 transition">
+          Política de Privacidad
+        </button>
       </div>
+
+      <p class="text-xs text-slate-400 text-center sm:text-right">© 2026 Kerigma. Todos los derechos reservados.</p>
+    </div>
   </footer>
 
   <!-- MODAL 1: AGENDAR FECHA, HORA Y MAPA DE TRASLADO -->
